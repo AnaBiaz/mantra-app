@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mantra • Outbound</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"></div>
+    <div>
+      <div class="title">Mantra</div>
+      <div class="subtitle">Outbound • Padrão gerência (colar em 1 célula no Sheets)</div>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <div class="chip">Hoje: <span id="dataHoje">--/--/----</span></div>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- LEFT: FORM -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Preenchimento</h2>
+      <p>Preencha o dia do relatório e o “dia anterior” (manual). Use as abas para trocar o subprocesso.</p>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Dia (relatório)</label>
+        <input id="diaAtual" type="date" />
+      </div>
+      <div>
+        <label>Label do dia anterior (ex.: 24/02)</label>
+        <input id="labelDiaAnterior" type="text" placeholder="24/02" />
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Subprocessos">
+      <button class="tab is-active" data-tab="picking" type="button">Picking</button>
+      <button class="tab" data-tab="mono" type="button">Packing Mono</button>
+      <button class="tab" data-tab="ptw" type="button">Packing PTW</button>
+
+      <!-- mantém o select para o JS sem refatorar -->
+      <select id="subprocesso" class="sr-only" aria-hidden="true" tabindex="-1">
+        <option value="picking" selected>Picking</option>
+        <option value="mono">Packing Mono</option>
+        <option value="ptw">Packing PTW</option>
+      </select>
+    </div>
+
+    <!-- ============ PICKING ============ -->
+    <section class="subpanel" id="formPicking">
+      <div class="subpanel-title">Picking</div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Metas</div>
+          <div class="row">
+            <div><label>Meta Líquida picking</label><input id="p_metaLiq" value="98,7"></div>
+            <div><label>Real</label><input id="p_realLiq" value="56,00"></div>
+          </div>
+          <div class="row">
+            <div><label>Meta Efetiva picking</label><input id="p_metaEf" value="118,44"></div>
+            <div><label>Real</label><input id="p_realEf" value="104,37"></div>
+          </div>
+          <div class="row">
+            <div><label>Meta utilização</label><input id="p_metaUtil" value="80%"></div>
+            <div><label>Real</label><input id="p_realUtil" value="75,98%"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Indiretos</div>
+          <div class="row">
+            <div><label>% indiretos Plan</label><input id="p_indPlan" value="0%"></div>
+            <div><label>% indiretos Real</label><input id="p_indReal" value="3,51%"></div>
+          </div>
+          <div class="note">Referência produtividade líquida: <b>100</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribuição • Veteranos</div>
+        <div class="table">
+          <div class="thead">
+            <div>Faixa</div><div>Dia atual</div><div>Dia anterior</div><div>Qtd</div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&gt;100</div>
+            <div><input id="p_v_gt" value="17%"></div>
+            <div><input id="p_v_gt_prev" placeholder="43%"></div>
+            <div><input id="p_v_gt_q" value="2 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">80–99</div>
+            <div><input id="p_v_80" value="30%"></div>
+            <div><input id="p_v_80_prev" placeholder="67%"></div>
+            <div><input id="p_v_80_q" value="5 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">50–79</div>
+            <div><input id="p_v_50" value="40%"></div>
+            <div><input id="p_v_50_prev" placeholder="0%"></div>
+            <div><input id="p_v_50_q" value="5 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&lt;50</div>
+            <div><input id="p_v_lt" value="0%"></div>
+            <div><input id="p_v_lt_prev" placeholder="11,11%"></div>
+            <div><input id="p_v_lt_q" value="1 veterano"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribuição • Novinhos</div>
+        <div class="table">
+          <div class="thead">
+            <div>Faixa</div><div>Dia atual</div><div>Dia anterior</div><div>Qtd</div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&gt;100</div>
+            <div><input id="p_n_gt" value="14%"></div>
+            <div><input id="p_n_gt_prev" placeholder="47%"></div>
+            <div><input id="p_n_gt_q" value="4 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">80–99</div>
+            <div><input id="p_n_80" value="35%"></div>
+            <div><input id="p_n_80_prev" placeholder="43%"></div>
+            <div><input id="p_n_80_q" value="8 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">50–79</div>
+            <div><input id="p_n_50" value="43%"></div>
+            <div><input id="p_n_50_prev" placeholder="5%"></div>
+            <div><input id="p_n_50_q" value="9 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&lt;50</div>
+            <div><input id="p_n_lt" value="6%"></div>
+            <div><input id="p_n_lt_prev" placeholder="0%"></div>
+            <div><input id="p_n_lt_q" value="1 novinho"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Week 8 vs Dia</div>
+          <div class="table">
+            <div class="thead thead3">
+              <div>Faixa</div><div>W-8</div><div>Dia</div>
+            </div>
+            <div class="trow3">
+              <div class="badge">&gt;100</div><div><input id="p_w_gt" value="16%"></div><div><input id="p_d_gt" value="24%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">80–99</div><div><input id="p_w_80" value="43%"></div><div><input id="p_d_80" value="37%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">50–79</div><div><input id="p_w_50" value="36%"></div><div><input id="p_d_50" value="42%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">&lt;50</div><div><input id="p_w_lt" value="5%"></div><div><input id="p_d_lt" value="3%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Análise causa raiz</div>
+          <textarea id="p_causas" rows="8" placeholder="-> ... (1 por linha)"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PACKING MONO (ref 200) ============ -->
+    <section class="subpanel" id="formMono" hidden>
+      <div class="subpanel-title">Packing Mono</div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Metas</div>
+          <div class="row">
+            <div><label>Meta Líquida packing</label><input id="m_metaLiq" value="128,4"></div>
+            <div><label>Real</label><input id="m_realLiq" value="128,47"></div>
+          </div>
+          <div class="row">
+            <div><label>Meta Efetiva packing</label><input id="m_metaEf" value="192,6"></div>
+            <div><label>Real</label><input id="m_realEf" value="202,22"></div>
+          </div>
+          <div class="row">
+            <div><label>Meta utilização</label><input id="m_metaUtil" value="85%"></div>
+            <div><label>Real</label><input id="m_realUtil" value="72,62%"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Indiretos</div>
+          <div class="row">
+            <div><label>% indiretos Plan</label><input id="m_indPlan" value="8,12%"></div>
+            <div><label>% indiretos Real</label><input id="m_indReal" value="11,41%"></div>
+          </div>
+          <div class="note">Referência produtividade líquida: <b>200</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribuição • Veteranos</div>
+        <div class="table">
+          <div class="thead">
+            <div>Faixa</div><div>Dia atual</div><div>Dia anterior</div><div>Qtd</div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&gt;200</div>
+            <div><input id="m_v_gt" value="24%"></div>
+            <div><input id="m_v_gt_prev" placeholder="21%"></div>
+            <div><input id="m_v_gt_q" value="9 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">80–99</div>
+            <div><input id="m_v_80" value="47%"></div>
+            <div><input id="m_v_80_prev" placeholder="46%"></div>
+            <div><input id="m_v_80_q" value="14 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">50–79</div>
+            <div><input id="m_v_50" value="21%"></div>
+            <div><input id="m_v_50_prev" placeholder="23%"></div>
+            <div><input id="m_v_50_q" value="12 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&lt;50</div>
+            <div><input id="m_v_lt" value="6%"></div>
+            <div><input id="m_v_lt_prev" placeholder="7,14%"></div>
+            <div><input id="m_v_lt_q" value="1 veterano"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribuição • Novinhos</div>
+        <div class="table">
+          <div class="thead">
+            <div>Faixa</div><div>Dia atual</div><div>Dia anterior</div><div>Qtd</div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&gt;200</div>
+            <div><input id="m_n_gt" value="4%"></div>
+            <div><input id="m_n_gt_prev" placeholder="0%"></div>
+            <div><input id="m_n_gt_q" value="1 novinho"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">80–99</div>
+            <div><input id="m_n_80" value="25%"></div>
+            <div><input id="m_n_80_prev" placeholder="18%"></div>
+            <div><input id="m_n_80_q" value="4 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">50–79</div>
+            <div><input id="m_n_50" value="52%"></div>
+            <div><input id="m_n_50_prev" placeholder="70%"></div>
+            <div><input id="m_n_50_q" value="12 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&lt;50</div>
+            <div><input id="m_n_lt" value="6%"></div>
+            <div><input id="m_n_lt_prev" placeholder="8%"></div>
+            <div><input id="m_n_lt_q" value="5 novinhos"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Week 8 vs Dia</div>
+          <div class="table">
+            <div class="thead thead3">
+              <div>Faixa</div><div>W-8</div><div>Dia</div>
+            </div>
+            <div class="trow3">
+              <div class="badge">&gt;200</div><div><input id="m_w_gt" value="22%"></div><div><input id="m_d_gt" value="27%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">80–99</div><div><input id="m_w_80" value="41%"></div><div><input id="m_d_80" value="20%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">50–79</div><div><input id="m_w_50" value="28%"></div><div><input id="m_d_50" value="27%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">&lt;50</div><div><input id="m_w_lt" value="9%"></div><div><input id="m_d_lt" value="25%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Análise causa raiz</div>
+          <textarea id="m_causas" rows="8" placeholder="-> ... (1 por linha)"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PACKING PTW (ref 360) ============ -->
+    <section class="subpanel" id="formPTW" hidden>
+      <div class="subpanel-title">Packing PTW</div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Metas</div>
+          <div class="row">
+            <div><label>Meta Líquida packing</label><input id="t_metaLiq" value="271,2"></div>
+            <div><label>Real</label><input id="t_realLiq" value="277,23"></div>
+          </div>
+          <div class="row">
+            <div><label>Meta Efetiva packing</label><input id="t_metaEf" value="406,8"></div>
+            <div><label>Real</label><input id="t_realEf" value="403,65"></div>
+          </div>
+          <div class="row">
+            <div><label>Meta utilização</label><input id="t_metaUtil" value="85%"></div>
+            <div><label>Real</label><input id="t_realUtil" value="73,51%"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Indiretos</div>
+          <div class="row">
+            <div><label>% indiretos Plan</label><input id="t_indPlan" value="0%"></div>
+            <div><label>% indiretos Real</label><input id="t_indReal" value="4,11%"></div>
+          </div>
+          <div class="note">Referência produtividade líquida: <b>360</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribuição • Veteranos</div>
+        <div class="table">
+          <div class="thead">
+            <div>Faixa</div><div>Dia atual</div><div>Dia anterior</div><div>Qtd</div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&gt;360</div>
+            <div><input id="t_v_gt" value="67%"></div>
+            <div><input id="t_v_gt_prev" placeholder="33%"></div>
+            <div><input id="t_v_gt_q" value="2 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">80–99</div>
+            <div><input id="t_v_80" value="50%"></div>
+            <div><input id="t_v_80_prev" placeholder="33%"></div>
+            <div><input id="t_v_80_q" value="1 veterano"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">50–79</div>
+            <div><input id="t_v_50" value="0%"></div>
+            <div><input id="t_v_50_prev" placeholder="33%"></div>
+            <div><input id="t_v_50_q" value="0 veteranos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&lt;50</div>
+            <div><input id="t_v_lt" value="0%"></div>
+            <div><input id="t_v_lt_prev" placeholder="14%"></div>
+            <div><input id="t_v_lt_q" value="0 veteranos"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribuição • Novinhos</div>
+        <div class="table">
+          <div class="thead">
+            <div>Faixa</div><div>Dia atual</div><div>Dia anterior</div><div>Qtd</div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&gt;360</div>
+            <div><input id="t_n_gt" value="0%"></div>
+            <div><input id="t_n_gt_prev" placeholder="0%"></div>
+            <div><input id="t_n_gt_q" value="0 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">80–99</div>
+            <div><input id="t_n_80" value="0%"></div>
+            <div><input id="t_n_80_prev" placeholder="0%"></div>
+            <div><input id="t_n_80_q" value="0 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">50–79</div>
+            <div><input id="t_n_50" value="0%"></div>
+            <div><input id="t_n_50_prev" placeholder="0%"></div>
+            <div><input id="t_n_50_q" value="0 novinhos"></div>
+          </div>
+
+          <div class="trow">
+            <div class="badge">&lt;50</div>
+            <div><input id="t_n_lt" value="0%"></div>
+            <div><input id="t_n_lt_prev" placeholder="0%"></div>
+            <div><input id="t_n_lt_q" value="0 novinhos"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Week 8 vs Dia</div>
+          <div class="table">
+            <div class="thead thead3">
+              <div>Faixa</div><div>W-8</div><div>Dia</div>
+            </div>
+            <div class="trow3">
+              <div class="badge">&gt;360</div><div><input id="t_w_gt" value="43%"></div><div><input id="t_d_gt" value="67%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">80–99</div><div><input id="t_w_80" value="25%"></div><div><input id="t_d_80" value="33%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">50–79</div><div><input id="t_w_50" value="17%"></div><div><input id="t_d_50" value="0%"></div>
+            </div>
+            <div class="trow3">
+              <div class="badge">&lt;50</div><div><input id="t_w_lt" value="0%"></div><div><input id="t_d_lt" value="0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Análise causa raiz</div>
+          <textarea id="t_causas" rows="8" placeholder="-> ... (1 por linha)"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="btnGerar" type="button" class="primary">Gerar Preview</button>
+      <button id="btnCopiar1Celula" type="button">Copiar (1 célula)</button>
+    </div>
+  </section>
+
+  <!-- RIGHT: OUTPUT -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Saída para colar no Sheets (1 célula)</h2>
+      <p>O texto sai com quebras de linha. Deltas: “piora/evolução de X%”.</p>
+    </div>
+
+    <textarea id="saida1Celula" class="bigText" rows="16" readonly></textarea>
+
+    <div class="divider"></div>
+
+    <div class="panel-head">
+      <h2>Preview (visual no app)</h2>
+      <p>Verde/vermelho apenas para leitura aqui no webapp.</p>
+    </div>
+
+    <div id="preview" class="previewPaper"></div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+
+<script>
+  // Tabs -> sincroniza com o select #subprocesso (mantém seu app.js)
+  const tabs = document.querySelectorAll(".tab");
+  const sel = document.querySelector("#subprocesso");
+
+  function activate(tabValue){
+    tabs.forEach(t => t.classList.toggle("is-active", t.dataset.tab === tabValue));
+    sel.value = tabValue;
+    sel.dispatchEvent(new Event("change"));
+  }
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+</script>
+</body>
+</html>
